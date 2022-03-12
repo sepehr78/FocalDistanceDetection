@@ -38,12 +38,11 @@ raylen = 20 * um
 rayleigh_arr = np.arange(-20, 20 + 0.00001, raylen / 5)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4]) * 1000 * nm
+internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
 external_noise_stds = np.linspace(0, 0.05, 6)
 
 
-def save_noisy_images(rayleigh_idx):
-    rayleigh = rayleigh_arr[rayleigh_idx]
+def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
     og_u0.gauss_beam(A=1, r0=(0, 0), z0=0 * mm, w0=5 * um, theta=0 * degrees)
 
@@ -54,7 +53,7 @@ def save_noisy_images(rayleigh_idx):
     t1.lens(r0=(0.0, 0.0), radius=dia2 / 2, focal=focal2, mask=True)
 
     for l in tqdm(range(num_imgs_per_noise)):
-        for j, internal_noise_std in enumerate(internal_noise_stds):
+        for internal_noise_std in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
             noise = 1j * np.random.normal(0, internal_noise_std, (num_samples, num_samples))
             u0.u = u0.u + noise
@@ -71,7 +70,7 @@ def save_noisy_images(rayleigh_idx):
 
             intensity = np.abs(u5.u) ** 2  # Here is where we take the abs square of the electric field (u5.u) in
 
-            for k, external_noise_std in enumerate(external_noise_stds):
+            for external_noise_std in external_noise_stds:
                 ext_noise = np.random.normal(0, external_noise_std, (num_samples, num_samples))
 
                 i_w_ext_noise = (intensity - intensity.min()) / (intensity.max() - intensity.min()) + ext_noise
@@ -80,7 +79,7 @@ def save_noisy_images(rayleigh_idx):
                 img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
                 # plt.imshow(img, cmap="gray")
                 # plt.show()
-                img.save(os.path.join(save_dir, f"{rayleigh_idx}_{j}_{k}_imgs", f"{l:05d}.png"))
+                img.save(os.path.join(save_dir, f"{rayleigh}_{internal_noise_std}_{external_noise_std}_imgs", f"{l:05d}.png"))
 
 
 if __name__ == '__main__':
@@ -90,13 +89,12 @@ if __name__ == '__main__':
             f"Focus distances: {rayleigh_arr}\nInternal noises: {internal_noise_stds}\nExternal noises: {external_noise_stds}")
 
     print("Creating folder structure...")
-    for i, j, k in itertools.product(range(len(rayleigh_arr)), range(len(internal_noise_stds)),
-                                     range(len(external_noise_stds))):
-        img_dir = os.path.join(save_dir, f"{i}_{j}_{k}_imgs")
+    for rayleigh, int_noise, ext_noise in itertools.product(rayleigh_arr, internal_noise_stds, external_noise_stds):
+        img_dir = os.path.join(save_dir, f"{rayleigh}_{int_noise}_{ext_noise}_imgs")
         os.makedirs(img_dir, exist_ok=True)
 
     total_num_imgs = len(rayleigh_arr) * len(internal_noise_stds) * len(external_noise_stds) * num_imgs_per_noise
     n_jobs = min(len(rayleigh_arr), num_procs_to_use)
     print(f"Generating {total_num_imgs} images using {n_jobs} parallel processes...")
 
-    Parallel(n_jobs=n_jobs)(delayed(save_noisy_images)(i) for i in tqdm(range(len(rayleigh_arr))))
+    Parallel(n_jobs=n_jobs)(delayed(save_noisy_images)(rayleigh) for rayleigh in tqdm(rayleigh_arr))
