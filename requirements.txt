@@ -1,0 +1,15 @@
+numpy~=1.20.2
+onnx~=1.11.0
+torch~=1.10.2
+torchvision~=0.11.3
+onnx2pytorch~=0.4.1
+torchinfo~=1.6.3
+tqdm~=4.62.3
+fastai~=2.5.3
+pandas~=1.2.4
+scikit-learn~=1.0.2
+seaborn~=0.11.1
+matplotlib~=3.3.4
+Pillow~=9.0.1
+joblib~=1.1.0
+diffractio~=0.0.13

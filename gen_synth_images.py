@@ -3,29 +3,19 @@ import itertools
 import multiprocessing
 import os.path
 
-import diffractio
-import png
 import numpy as np
-import matplotlib.pyplot as plt
+from PIL import Image
 from joblib import Parallel, delayed
 from matplotlib import rcParams
-from PIL import Image
 from tqdm import tqdm
 
-rcParams['figure.figsize'] = (7, 5)
-rcParams['figure.dpi'] = 125
-from datetime import datetime
-
-from diffractio import degrees, mm, plt, sp, um, nm
+from diffractio import degrees, mm, um, nm
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.utils_optics import beam_width_1D, FWHM1D
 
-"""The library bugs with colab, so we need to change some codes in the init.py
-
-First change freq_max = psutil.cpu_freq()[2] into freq_max = psutil.cpu_freq() in line 44 in the __init__.py
-
-Then close the, print("max frequency       : {:1.0f} GHz".format(freq_max)) in line 54 with #
+"""
+This script generates images with given internal and external noise stds and resizes and saves them in the given
+save directory. It uses multiple cores/threads in parallel to speed up the simulations.
 """
 
 saved_img_size = (48, 48)
@@ -91,8 +81,6 @@ def save_noisy_images(rayleigh_idx):
 
 
 if __name__ == '__main__':
-    # start=datetime.now()
-    # Generates the noise levels ranging from 0nm to 500nm
     os.makedirs(save_dir, exist_ok=True)
     with open(os.path.join(save_dir, "info.txt"), 'w') as f:
         f.write(
