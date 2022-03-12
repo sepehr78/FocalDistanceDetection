@@ -3,6 +3,8 @@ import itertools
 import multiprocessing
 import os.path
 
+import PIL.Image
+import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from joblib import Parallel, delayed
@@ -37,7 +39,7 @@ rayleigh_arr = np.arange(-20, 20 + 0.00001, raylen / 5)  # Modify the stepsize b
 wavelength = 0.976 * um
 
 internal_noise_stds = np.arange(6) * 1000 * nm
-external_noise_stds = np.linspace(0, 0.1, 6)
+external_noise_stds = np.linspace(0, 0.05, 6)
 
 
 def save_noisy_images(rayleigh_idx):
@@ -70,13 +72,15 @@ def save_noisy_images(rayleigh_idx):
             intensity = np.abs(u5.u) ** 2  # Here is where we take the abs square of the electric field (u5.u) in
 
             for k, external_noise_std in enumerate(external_noise_stds):
+                external_noise_std = 0.1
                 ext_noise = np.random.normal(0, external_noise_std, (num_samples, num_samples))
 
                 i_w_ext_noise = (intensity - intensity.min()) / (intensity.max() - intensity.min()) + ext_noise
-                img_data = ((i_w_ext_noise - i_w_ext_noise.min()) / (
-                        i_w_ext_noise.max() - i_w_ext_noise.min()) * 255).astype(np.uint8)
+                img_data = ((i_w_ext_noise - i_w_ext_noise.min()) / (i_w_ext_noise.max() - i_w_ext_noise.min()) * 255).astype(np.uint8)
                 img = Image.fromarray(img_data, "L")
-                img = img.resize(saved_img_size)
+                img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
+                plt.imshow(img, cmap="gray")
+                plt.show()
                 img.save(os.path.join(save_dir, f"{rayleigh_idx}_{j}_{k}_imgs", f"{l:05d}.png"))
 
 
@@ -95,9 +99,5 @@ if __name__ == '__main__':
     total_num_imgs = len(rayleigh_arr) * len(internal_noise_stds) * len(external_noise_stds) * num_imgs_per_noise
     n_jobs = min(len(rayleigh_arr), num_procs_to_use)
     print(f"Generating {total_num_imgs} images using {n_jobs} parallel processes...")
-    # get_rayleigh = lambda i: rayleigh_arr[i]
-    # get_internal_noise_std = lambda i: internal_noise_stds[i]
-    # get_external_noise_stds = lambda i: external_noise_stds[i]
-    # get_img_save_path = lambda i, j, k, l: os.path.join(save_dir, f"{i}_{j}_{k}_imgs", f"{l:05d}.png")
 
     Parallel(n_jobs=n_jobs)(delayed(save_noisy_images)(i) for i in tqdm(range(len(rayleigh_arr))))
