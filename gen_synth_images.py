@@ -72,7 +72,6 @@ def save_noisy_images(rayleigh_idx):
             intensity = np.abs(u5.u) ** 2  # Here is where we take the abs square of the electric field (u5.u) in
 
             for k, external_noise_std in enumerate(external_noise_stds):
-                external_noise_std = 0.1
                 ext_noise = np.random.normal(0, external_noise_std, (num_samples, num_samples))
 
                 i_w_ext_noise = (intensity - intensity.min()) / (intensity.max() - intensity.min()) + ext_noise
