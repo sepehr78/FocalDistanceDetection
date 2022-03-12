@@ -79,8 +79,8 @@ def save_noisy_images(rayleigh_idx):
                 img_data = ((i_w_ext_noise - i_w_ext_noise.min()) / (i_w_ext_noise.max() - i_w_ext_noise.min()) * 255).astype(np.uint8)
                 img = Image.fromarray(img_data, "L")
                 img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
-                plt.imshow(img, cmap="gray")
-                plt.show()
+                # plt.imshow(img, cmap="gray")
+                # plt.show()
                 img.save(os.path.join(save_dir, f"{rayleigh_idx}_{j}_{k}_imgs", f"{l:05d}.png"))
 
 
