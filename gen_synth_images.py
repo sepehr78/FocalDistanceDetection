@@ -21,13 +21,13 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 """
 
 saved_img_size = (48, 48)
-num_samples = 2000
+num_samples = 2500
 save_dir = "synth_images"
 num_imgs_per_noise = 100
 num_procs_to_use = multiprocessing.cpu_count()
 
-x0 = np.linspace(-500 * um, 500 * um, num_samples)
-y0 = np.linspace(-500 * um, 500 * um, num_samples)
+x0 = np.linspace(-600 * um, 600 * um, num_samples)
+y0 = np.linspace(-600 * um, 600 * um, num_samples)
 
 focal = 8 * mm
 focal2 = 90 * mm
@@ -44,7 +44,7 @@ external_noise_stds = np.linspace(0, 0.05, 6)
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-    og_u0.gauss_beam(A=100000, r0=(0, 0), z0=0 * mm, w0=5 * um, theta=0 * degrees)
+    og_u0.gauss_beam(A=1, r0=(0, 0), z0=0 * mm, w0=5 * um, theta=0 * degrees)
 
     # initialize lenses
     t0 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
