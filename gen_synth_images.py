@@ -44,7 +44,7 @@ external_noise_stds = np.linspace(0, 0.05, 6)
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-    og_u0.gauss_beam(A=1, r0=(0, 0), z0=0 * mm, w0=5 * um, theta=0 * degrees)
+    og_u0.gauss_beam(A=100000, r0=(0, 0), z0=0 * mm, w0=5 * um, theta=0 * degrees)
 
     # initialize lenses
     t0 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
