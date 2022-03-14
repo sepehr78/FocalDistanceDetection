@@ -12,7 +12,7 @@ from utils import *
 
 parser = argparse.ArgumentParser(description='Train regression CNN to predict simulated images')
 parser.add_argument('--bs', type=int, default=16, help='Batch size')
-parser.add_argument('--num_epochs', type=int, default=50, help='Number of epochs')
+parser.add_argument('--num_epochs', type=int, default=100, help='Number of epochs')
 parser.add_argument('--val_p', type=float, default=0.15, help='Percentage of frames to use for validation')
 parser.add_argument('--seed', type=int, default=423132, help='Seed used for splitting frames into train/val/test')
 parser.add_argument('--synth_imgs_dir', default="synth_images", help='Directory where generated synthetic images from '
