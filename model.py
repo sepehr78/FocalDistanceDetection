@@ -4,7 +4,7 @@ from torch.nn import Sigmoid
 
 
 class FocusClassifier(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes, img_size=(40, 32)):
         super().__init__()
         self.num_classes = num_classes
 
@@ -17,8 +17,12 @@ class FocusClassifier(nn.Module):
             nn.MaxPool2d(2, 2)
         )
 
+        temp_tensor = torch.zeros(img_size).unsqueeze(0).unsqueeze(0)
+        temp_out = self.cnn(temp_tensor)
+        n_flat_features = torch.flatten(temp_out, 1).size(1)
+
         self.classifier = nn.Sequential(
-            nn.Linear(3072, 512),
+            nn.Linear(n_flat_features, 512),
             nn.ReLU(),
             nn.Linear(512, 256),
             nn.ReLU(),

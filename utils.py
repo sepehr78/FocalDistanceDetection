@@ -5,9 +5,11 @@ import torch.cuda
 import torch.nn.functional as F
 from fastai.callback.schedule import Learner  # To get `fit_one_cycle`, `lr_find`
 from fastai.callback.tracker import SaveModelCallback
+from fastai.losses import CrossEntropyLossFlat
 from fastai.metrics import accuracy
 from fastai.optimizer import OptimWrapper
 from torch import optim
+from torch.nn import CrossEntropyLoss
 from torch.utils.data import ConcatDataset, random_split
 
 from VideoDataset import VideoDataset
@@ -97,7 +99,7 @@ def train_predictor(net, dls, label_names, num_epochs, path=None):
 def train_classifier(net, dls, num_epochs, path=None):
     net = net.to(device)
     opt_func = partial(OptimWrapper, opt=optim.Adam)
-    learn = Learner(dls, net, loss_func=F.cross_entropy, opt_func=opt_func, metrics=accuracy, path=path)
+    learn = Learner(dls, net, loss_func=CrossEntropyLossFlat(), opt_func=opt_func, metrics=accuracy, path=path)
     lr = learn.lr_find(num_it=2000)[0]
     learn.fit_one_cycle(num_epochs, lr, cbs=SaveModelCallback(monitor="accuracy", min_delta=0.001))
     learn.save("trainedModel", with_opt=False)

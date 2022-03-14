@@ -25,6 +25,7 @@ num_samples = 2500
 save_dir = "synth_images"
 num_imgs_per_noise = 100
 num_procs_to_use = multiprocessing.cpu_count()
+num_procs_to_use = 6  # 12 processes was too much because each one uses more than 3 GB of RAM
 
 x0 = np.linspace(-600 * um, 600 * um, num_samples)
 y0 = np.linspace(-600 * um, 600 * um, num_samples)
@@ -35,11 +36,14 @@ diameter = 2 * mm
 dia2 = 2 * mm
 d = 444 * mm
 raylen = 20 * um
-rayleigh_arr = np.arange(-20, 20 + 0.00001, raylen / 5)  # Modify the stepsize by this
+rayleigh_arr = np.arange(-5 * raylen, 5 * raylen + 0.00001, raylen)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
-external_noise_stds = np.linspace(0, 0.05, 6)
+# internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
+# external_noise_stds = np.linspace(0, 0.05, 6)
+
+internal_noise_stds = np.asarray([0, 0.5, 1.0, 1.5, 2.0, 2.5]) * 1000 * nm
+external_noise_stds = np.asarray[0, 0.01, 0.02, 0.03]
 
 
 def save_noisy_images(rayleigh):
