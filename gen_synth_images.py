@@ -36,7 +36,8 @@ diameter = 2 * mm
 dia2 = 2 * mm
 d = 444 * mm
 raylen = 20 * um
-rayleigh_arr = np.arange(-5 * raylen, 5 * raylen + 0.00001, raylen)  # Modify the stepsize by this
+# rayleigh_arr = np.arange(-6 * raylen, 6 * raylen + 0.00001, raylen)  # Modify the stepsize by this
+rayleigh_arr = np.asarray([-250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250])
 wavelength = 0.976 * um
 
 # internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm

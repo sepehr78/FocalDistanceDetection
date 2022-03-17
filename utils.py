@@ -1,4 +1,5 @@
 import os
+import time
 from functools import partial
 import numpy as np
 import torch.cuda
@@ -15,7 +16,6 @@ from torch.utils.data import ConcatDataset, random_split
 from VideoDataset import VideoDataset
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
 
 def load_all_datasets(dataset_dir, predictor=False):
     video_files = os.listdir(dataset_dir)
@@ -85,10 +85,11 @@ def compute_predicted_acc(predicted, target, label_names, return_preds_target=Fa
     return correct / total
 
 
-def train_predictor(net, dls, label_names, num_epochs, path=None):
+def train_predictor(net, dls, label_names, num_epochs, path=None, use_adam=True):
     predict_acc = lambda pred, target: compute_predicted_acc(pred, target, label_names)
     net = net.to(device)
-    opt_func = partial(OptimWrapper, opt=optim.Adam)
+    opt_func = partial(OptimWrapper, opt=optim.Adam) if use_adam else \
+        partial(OptimWrapper, opt=optim.SGD, momentum=0.93, weight_decay=0.001)
     learn = Learner(dls, net, loss_func=F.mse_loss, opt_func=opt_func, metrics=predict_acc, path=path)
     lr = learn.lr_find(num_it=2000)[0]
     learn.fit_one_cycle(num_epochs, lr, cbs=SaveModelCallback(monitor='<lambda>', min_delta=0.001))
@@ -96,11 +97,13 @@ def train_predictor(net, dls, label_names, num_epochs, path=None):
     return learn
 
 
-def train_classifier(net, dls, num_epochs, path=None):
+def train_classifier(net, dls, num_epochs, path=None, use_adam=True):
     net = net.to(device)
-    opt_func = partial(OptimWrapper, opt=optim.Adam)
+    opt_func = partial(OptimWrapper, opt=optim.Adam) if use_adam else \
+        partial(OptimWrapper, opt=optim.SGD, momentum=0.93, weight_decay=0.001)
     learn = Learner(dls, net, loss_func=CrossEntropyLossFlat(), opt_func=opt_func, metrics=accuracy, path=path)
     lr = learn.lr_find(num_it=2000)[0]
+    print(f"Using a learning rate of {lr}")
     learn.fit_one_cycle(num_epochs, lr, cbs=SaveModelCallback(monitor="accuracy", min_delta=0.001))
     learn.save("trainedModel", with_opt=False)
     return learn
@@ -109,18 +112,25 @@ def train_classifier(net, dls, num_epochs, path=None):
 def predict_labels_net(net, d_loader, label_names, is_predictor_model):
     predictions = []
     targets = []
+    time_taken_arr = []
+    net = net.eval()
     with torch.no_grad():
         for inputs, labels in d_loader:
             inputs = inputs.to(device)
             labels = labels.to(device)
 
+            starting_time = time.time()
             outputs = net(inputs)
+            time_taken_per_img = (time.time() - starting_time) / len(labels)
+            time_taken_arr.append(time_taken_per_img)
+
             if is_predictor_model:
                 _, preds, tar = compute_predicted_acc(outputs, labels, label_names, True)
             else:
                 preds = label_names[outputs.argmax(dim=1)]
                 tar = label_names[labels]
+
             predictions.extend(preds.cpu().numpy().flatten().tolist())
             targets.extend(tar.cpu().numpy().flatten().tolist())
 
-    return np.asarray(predictions), np.asarray(targets)
+    return np.asarray(predictions), np.asarray(targets), np.mean(time_taken_arr)

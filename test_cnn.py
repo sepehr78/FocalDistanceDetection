@@ -29,9 +29,9 @@ tex_fonts = {
 }
 plt.rcParams.update(tex_fonts)
 
-folder_naems = ["Silicon"]
-directories = [os.path.join("testing_videos", x) for x in folder_naems]
-results_directories = [os.path.join("results_classifier", x) for x in folder_naems]
+folder_names = ["Copper", "Steel", "Silicon"]
+directories = [os.path.join("testing_videos", x) for x in folder_names]
+results_directories = [os.path.join("results_predictor", x) for x in folder_names]
 
 parser = argparse.ArgumentParser(description='Plot confusion matrices and report accuracies of trained models on test '
                                              'data. train_cnn.py must be run before')
@@ -43,7 +43,7 @@ parser.add_argument('--directories', default=directories, nargs='+',
                          'distances and the name of each video file should be '
                          'its focal distance (e.g., 150.avi)')
 parser.add_argument('--test_classifier', action='store_true')
-parser.set_defaults(test_classifier=True)
+parser.set_defaults(test_classifier=False)
 
 args = parser.parse_args()
 
@@ -57,7 +57,7 @@ def plot_cm_matrix(targets, predictions, label_names, file_name=None):
     fig = plt.figure(figsize=(6.4 * 1.1, 4.8 * 1.1))
     # disp.plot(include_values=False, ax=fig.gca())
     df_cm = pd.DataFrame(cm, index=label_names, columns=label_names)
-    sns.heatmap(df_cm, cmap="flare", linewidths=.5, square=True)
+    sns.heatmap(df_cm, cmap="flare", linewidths=.5, square=True, vmin=0, vmax=1)
     plt.xlabel("Predicted label")
     plt.ylabel("True label")
     plt.tight_layout()
@@ -68,6 +68,7 @@ def plot_cm_matrix(targets, predictions, label_names, file_name=None):
 if __name__ == '__main__':
     results_directories = args.results_directories
     testing_directories = args.directories
+    time_taken_arr = []
     for directory, result_dir in zip(testing_directories, results_directories):
         label_names_np = pickle.load(open(os.path.join(result_dir, "label_names.pkl"), "rb"))
         net = FocusClassifier(len(label_names_np)).to(device) if use_classifier else FocusPredictor().to(device)
@@ -79,9 +80,11 @@ if __name__ == '__main__':
 
         label_names = torch.from_numpy(label_names_np).long().to(device)
 
-        testing_dl = DataLoader(ConcatDataset(datasets), batch_size=512, shuffle=False, num_workers=4, pin_memory=True)
+        testing_dl = DataLoader(ConcatDataset(datasets), batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
 
-        test_preds, test_targets = predict_labels_net(net, testing_dl, label_names, not use_classifier)
+        test_preds, test_targets, avg_time_taken = predict_labels_net(net, testing_dl, label_names, not use_classifier)
+        time_taken_arr.append(avg_time_taken)
+
         class_report_txt = classification_report(test_targets, test_preds, target_names=label_names_np.astype(str))
         print(class_report_txt)
         with open(os.path.join(result_dir, "testing_report.txt"), 'w') as f:
@@ -93,3 +96,5 @@ if __name__ == '__main__':
             pickle.dump(class_report_dict, f)
 
         plot_cm_matrix(test_targets, test_preds, label_names_np, os.path.join(result_dir, "testing_cm.pdf"))
+
+    print(f"CNN processed {1 / np.mean(time_taken_arr):.2f} images/sec when using {device}")

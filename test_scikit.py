@@ -1,6 +1,7 @@
 import argparse
 import os
 import pickle
+import time
 
 import pandas as pd
 import sklearn.metrics
@@ -77,7 +78,10 @@ if __name__ == '__main__':
         for model_name in model_names:
             print(f"\nTesting {model_name}...")
             scikit_model = pickle.load(open(os.path.join(result_dir, "models", f"{model_name}.pkl"), "rb"))
+            starting_time = time.time()
             test_preds = scikit_model.predict(x_arr)
+            time_taken = (time.time() - starting_time) / len(x_arr)
+            print(f"{model_name} processed {1 / time_taken:.2f} images/sec when using {device}")
             class_report_txt = classification_report(test_targets, test_preds, target_names=label_names.astype(str))
             print(class_report_txt)
             with open(os.path.join(result_dir, f"{model_name}_testing_report.txt"), 'w') as f:
