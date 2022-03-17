@@ -5,29 +5,11 @@ import pickle
 import pandas as pd
 import sklearn.metrics
 from fastai.data.load import DataLoader
-from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 from utils import *
 
 from model import FocusClassifier, FocusPredictor
-
-sns.set_theme(style="white")
-
-tex_fonts = {
-    # Use LaTeX to write all text
-    "text.usetex": True,
-    "font.serif": 'Times New Roman',
-    # # Use 10pt font in plots, to match 10pt font in document
-    "axes.labelsize": 16,
-    "font.size": 16,
-    # # Make the legend/label fonts a little smaller
-    # "legend.fontsize": 11,
-    "legend.fontsize": 8,
-    "xtick.labelsize": 16,
-    "ytick.labelsize": 16
-}
-plt.rcParams.update(tex_fonts)
 
 folder_names = ["Copper", "Steel", "Silicon"]
 directories = [os.path.join("testing_videos", x) for x in folder_names]

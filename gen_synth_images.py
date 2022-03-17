@@ -43,8 +43,8 @@ wavelength = 0.976 * um
 # internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
 # external_noise_stds = np.linspace(0, 0.05, 6)
 
-internal_noise_stds = np.asarray([0, 0.5, 1.0, 1.5, 2.0, 2.5]) * 1000 * nm
-external_noise_stds = np.asarray([0, 0.01, 0.02, 0.03])
+internal_noise_stds = np.arange(0, 1.5 + 0.0001, 0.25) * 1000 * nm
+external_noise_stds = np.asarray([0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06])
 
 
 def save_noisy_images(rayleigh):

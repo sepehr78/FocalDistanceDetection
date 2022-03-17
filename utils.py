@@ -1,7 +1,9 @@
 import os
 import time
 from functools import partial
+
 import numpy as np
+import seaborn as sns
 import torch.cuda
 import torch.nn.functional as F
 from fastai.callback.schedule import Learner  # To get `fit_one_cycle`, `lr_find`
@@ -9,13 +11,30 @@ from fastai.callback.tracker import SaveModelCallback
 from fastai.losses import CrossEntropyLossFlat
 from fastai.metrics import accuracy
 from fastai.optimizer import OptimWrapper
+from matplotlib import pyplot as plt
 from torch import optim
-from torch.nn import CrossEntropyLoss
 from torch.utils.data import ConcatDataset, random_split
-
 from VideoDataset import VideoDataset
 
+sns.set_theme(style="white")
+
+tex_fonts = {
+    # Use LaTeX to write all text
+    "text.usetex": True,
+    "font.serif": 'Times New Roman',
+    # # Use 10pt font in plots, to match 10pt font in document
+    "axes.labelsize": 16,
+    "font.size": 16,
+    # # Make the legend/label fonts a little smaller
+    # "legend.fontsize": 11,
+    "legend.fontsize": 8,
+    "xtick.labelsize": 16,
+    "ytick.labelsize": 16
+}
+plt.rcParams.update(tex_fonts)
+
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 def load_all_datasets(dataset_dir, predictor=False):
     video_files = os.listdir(dataset_dir)
