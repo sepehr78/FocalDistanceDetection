@@ -21,29 +21,26 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 """
 
 saved_img_size = (48, 48)
-num_samples = 2000
+num_samples = 1100
 save_dir = "synth_images"
 num_imgs_per_noise = 1
 num_procs_to_use = multiprocessing.cpu_count()
 num_procs_to_use = 6  # 12 processes was too much because each one uses more than 3 GB of RAM
 
-x0 = np.linspace(-600 * um, 600 * um, num_samples)
-y0 = np.linspace(-600 * um, 600 * um, num_samples)
+x0 = np.linspace(-500 * um, 500 * um, num_samples)
+y0 = np.linspace(-500 * um, 500 * um, num_samples)
 
 focal = 11 * mm
 focal2 = 150 * mm
 diameter = 5.5 * mm
-dia2 =1 * mm
+dia2 = 1 * mm
 d = 300 * mm
 raylen = 150.4 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-# internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
-# external_noise_stds = np.linspace(0, 0.05, 6)
-
-internal_noise_stds = np.asarray([100, 200, 300, 500]) * 1000 * nm
-external_noise_stds = np.asarray([0.0000000001])
+internal_noise_stds = np.asarray([100, 500, 1000]) 
+external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -57,9 +54,9 @@ def save_noisy_images(rayleigh):
     t3 = Scalar_mask_XY(x0, y0, wavelength)
     
     for l in tqdm(range(num_imgs_per_noise)):
-        for internal_noise_std in internal_noise_stds:
+        for corr_len in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
-            t3.roughness(t=(internal_noise_stds * um, internal_noise_stds * um), s=300*nm)
+            t3.roughness(t=(corr_len , corr_len), s=500*nm)
             u0 = u0*t3
 
             z0 = focal + rayleigh  # Initial wave moving towards the first lens
@@ -83,7 +80,7 @@ def save_noisy_images(rayleigh):
                 img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
                 # plt.imshow(img, cmap="gray")
                 # plt.show()
-                img.save(os.path.join(save_dir, f"{rayleigh}_{internal_noise_std}_{external_noise_std}_imgs", f"{l:05d}.png"))
+                img.save(os.path.join(save_dir, f"{rayleigh}_{corr_len}_{external_noise_std}_imgs", f"{l:05d}.png"))
 
 
 if __name__ == '__main__':
