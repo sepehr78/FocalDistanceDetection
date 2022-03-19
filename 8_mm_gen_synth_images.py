@@ -40,7 +40,7 @@ rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the ste
 wavelength = 0.976 * um
 
 internal_noise_stds = np.asarray([0, 0.1, 0.25, 0.5]) * 1000*nm
-external_noise_stds = np.asarray([0, 0.01, 0.05, 0.1])
+external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
