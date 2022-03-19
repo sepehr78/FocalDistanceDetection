@@ -21,14 +21,14 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 """
 
 saved_img_size = (48, 48)
-num_samples = 2000
+num_samples = 1100
 save_dir = "synth_images"
 num_imgs_per_noise = 1
 num_procs_to_use = multiprocessing.cpu_count()
 num_procs_to_use = 6  # 12 processes was too much because each one uses more than 3 GB of RAM
 
-x0 = np.linspace(-600 * um, 600 * um, num_samples)
-y0 = np.linspace(-600 * um, 600 * um, num_samples)
+x0 = np.linspace(-500 * um, 500 * um, num_samples)
+y0 = np.linspace(-500 * um, 500 * um, num_samples)
 
 focal = 11 * mm
 focal2 = 150 * mm
