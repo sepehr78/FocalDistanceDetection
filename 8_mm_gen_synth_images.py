@@ -39,12 +39,8 @@ raylen = 79.5 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-# internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
-# external_noise_stds = np.linspace(0, 0.05, 6)
-
-internal_noise_stds = np.asarray([ 0.001]) * 1000 * nm
-external_noise_stds = np.asarray([0.000001])
-
+internal_noise_stds = np.asarray([0, 0.1, 0.25, 0.5]) * 1000*nm
+external_noise_stds = np.asarray([0, 0.01, 0.05, 0.1])
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
