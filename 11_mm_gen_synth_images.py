@@ -22,10 +22,10 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 
 saved_img_size = (48, 48)
 num_samples = 1100
-save_dir = "synth_images"
-num_imgs_per_noise = 1
+save_dir = "synth_images_11_mm"
+num_imgs_per_noise = 200
 num_procs_to_use = multiprocessing.cpu_count()
-num_procs_to_use = 6  # 12 processes was too much because each one uses more than 3 GB of RAM
+num_procs_to_use = 12  # 12 processes was too much because each one uses more than 3 GB of RAM
 
 x0 = np.linspace(-500 * um, 500 * um, num_samples)
 y0 = np.linspace(-500 * um, 500 * um, num_samples)
@@ -33,7 +33,7 @@ y0 = np.linspace(-500 * um, 500 * um, num_samples)
 focal = 11 * mm
 focal2 = 150 * mm
 diameter = 5.5 * mm
-dia2 =1 * mm
+dia2 = 1 * mm
 d = 300 * mm
 raylen = 150.4 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the stepsize by this
@@ -55,8 +55,8 @@ def save_noisy_images(rayleigh):
     for l in tqdm(range(num_imgs_per_noise)):
         for internal_noise_std in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
-            #noise = 1j * np.random.normal(0, internal_noise_std, (num_samples, num_samples))
-            u0.u = u0.u #+ noise
+            noise = 1j * np.random.normal(0, internal_noise_std, (num_samples, num_samples))
+            u0.u = u0.u + noise
 
             z0 = focal + rayleigh  # Initial wave moving towards the first lens
             u0 = u0.RS(z=z0, verbose=False, new_field=True)
@@ -79,7 +79,7 @@ def save_noisy_images(rayleigh):
                 img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
                 # plt.imshow(img, cmap="gray")
                 # plt.show()
-                img.save(os.path.join(save_dir, f"{rayleigh}_{internal_noise_std}_{external_noise_std}_imgs", f"{l:05d}.png"))
+                img.save(os.path.join(save_dir, f"{round(rayleigh,1)}_{internal_noise_std}_{external_noise_std}_imgs", f"{l:05d}.png"))
 
 
 if __name__ == '__main__':
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     print("Creating folder structure...")
     for rayleigh, int_noise, ext_noise in itertools.product(rayleigh_arr, internal_noise_stds, external_noise_stds):
-        img_dir = os.path.join(save_dir, f"{rayleigh}_{int_noise}_{ext_noise}_imgs")
+        img_dir = os.path.join(save_dir, f"{round(rayleigh,1)}_{int_noise}_{ext_noise}_imgs")
         os.makedirs(img_dir, exist_ok=True)
 
     total_num_imgs = len(rayleigh_arr) * len(internal_noise_stds) * len(external_noise_stds) * num_imgs_per_noise
