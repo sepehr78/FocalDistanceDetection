@@ -23,9 +23,9 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 saved_img_size = (48, 48)
 num_samples = 1100
 save_dir = "synth_images"
-num_imgs_per_noise = 1
+num_imgs_per_noise = 200
 num_procs_to_use = multiprocessing.cpu_count()
-num_procs_to_use = 6  # 12 processes was too much because each one uses more than 3 GB of RAM
+num_procs_to_use = 11  # 12 processes was too much because each one uses more than 3 GB of RAM
 
 x0 = np.linspace(-500 * um, 500 * um, num_samples)
 y0 = np.linspace(-500 * um, 500 * um, num_samples)
@@ -80,7 +80,7 @@ def save_noisy_images(rayleigh):
                 img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
                 # plt.imshow(img, cmap="gray")
                 # plt.show()
-                img.save(os.path.join(save_dir, f"{rayleigh}_{corr_len}_{external_noise_std}_imgs", f"{l:05d}.png"))
+                img.save(os.path.join(save_dir, f"{round(rayleigh,1)}_{corr_len}_{external_noise_std}_imgs", f"{l:05d}.png"))
 
 
 if __name__ == '__main__':
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
     print("Creating folder structure...")
     for rayleigh, int_noise, ext_noise in itertools.product(rayleigh_arr, internal_noise_stds, external_noise_stds):
-        img_dir = os.path.join(save_dir, f"{rayleigh}_{int_noise}_{ext_noise}_imgs")
+        img_dir = os.path.join(save_dir, f"{round(rayleigh,1)}_{int_noise}_{ext_noise}_imgs")
         os.makedirs(img_dir, exist_ok=True)
 
     total_num_imgs = len(rayleigh_arr) * len(internal_noise_stds) * len(external_noise_stds) * num_imgs_per_noise
