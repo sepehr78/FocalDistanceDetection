@@ -22,10 +22,10 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 
 saved_img_size = (48, 48)
 num_samples = 1100
-save_dir = "synth_images"
+save_dir = "synth_images_11_mm_high_corr"
 num_imgs_per_noise = 200
 num_procs_to_use = multiprocessing.cpu_count()
-num_procs_to_use = 11  # 12 processes was too much because each one uses more than 3 GB of RAM
+num_procs_to_use = 3  # 12 processes was too much because each one uses more than 3 GB of RAM
 
 x0 = np.linspace(-500 * um, 500 * um, num_samples)
 y0 = np.linspace(-500 * um, 500 * um, num_samples)
@@ -56,7 +56,7 @@ def save_noisy_images(rayleigh):
     for l in tqdm(range(num_imgs_per_noise)):
         for corr_len in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
-            t3.roughness(t=(corr_len , corr_len), s=500*nm)
+            t3.roughness(t=(corr_len , corr_len), s=226.4*nm)
             u0 = u0*t3
 
             z0 = focal + rayleigh  # Initial wave moving towards the first lens
