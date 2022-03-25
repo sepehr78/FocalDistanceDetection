@@ -39,7 +39,7 @@ raylen = 150 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-internal_noise_stds = np.asarray([100, 500, 1000]) 
+internal_noise_stds = np.asarray([100, 500, 750, 1000]) 
 external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
 
 def save_noisy_images(rayleigh):
@@ -56,7 +56,7 @@ def save_noisy_images(rayleigh):
     for l in tqdm(range(num_imgs_per_noise)):
         for corr_len in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
-            t3.roughness(t=(corr_len , corr_len), s=226.4*nm)
+            t3.roughness(t=(corr_len , corr_len), s=250*nm)
             u0 = u0*t3
 
             z0 = focal + rayleigh  # Initial wave moving towards the first lens
