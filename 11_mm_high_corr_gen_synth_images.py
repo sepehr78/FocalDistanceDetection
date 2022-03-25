@@ -35,7 +35,7 @@ focal2 = 150 * mm
 diameter = 5.5 * mm
 dia2 = 1 * mm
 d = 300 * mm
-raylen = 150.4 * um
+raylen = 150 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
