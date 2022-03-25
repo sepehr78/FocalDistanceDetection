@@ -41,7 +41,7 @@ wavelength = 0.976 * um
 
 internal_noise_stds = np.asarray([0, 0.1, 0.25, 0.5]) * 1000*nm
 external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
-corr_len = 100*um
+corr_len = 7*um
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -57,7 +57,7 @@ def save_noisy_images(rayleigh):
     for l in tqdm(range(num_imgs_per_noise)):
         for internal_noise_std in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
-            t3.roughness(t=(corr_len , corr_len), s=226.4*nm)
+            t3.roughness(t=(corr_len , corr_len), s=250*nm)
             u0 = u0*t3
 
             z0 = focal + rayleigh  # Initial wave moving towards the first lens
