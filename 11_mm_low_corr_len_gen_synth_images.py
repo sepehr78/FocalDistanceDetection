@@ -25,7 +25,7 @@ num_samples = 1100
 save_dir = "synth_images_11_mm"
 num_imgs_per_noise = 200
 num_procs_to_use = multiprocessing.cpu_count()
-num_procs_to_use = 12  # 12 processes was too much because each one uses more than 3 GB of RAM
+num_procs_to_use = 3  # 12 processes was too much because each one uses more than 3 GB of RAM
 
 x0 = np.linspace(-500 * um, 500 * um, num_samples)
 y0 = np.linspace(-500 * um, 500 * um, num_samples)
@@ -39,7 +39,7 @@ raylen = 150.4 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-internal_noise_stds = np.asarray([0, 0.1, 0.25, 0.5]) * 1000*nm
+internal_noise_stds = np.asarray([0, 0.25, 0.5, 0.75]) * 1000*nm
 external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
 corr_len = 7*um
 
