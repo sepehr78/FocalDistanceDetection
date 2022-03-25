@@ -57,7 +57,7 @@ def save_noisy_images(rayleigh):
     for l in tqdm(range(num_imgs_per_noise)):
         for internal_noise_std in internal_noise_stds:
             u0 = copy.deepcopy(og_u0)
-            t3.roughness(t=(corr_len , corr_len), s=250*nm)
+            t3.roughness(t=(corr_len , corr_len), s=internal_noise_stds)
             u0 = u0*t3
 
             z0 = focal + rayleigh  # Initial wave moving towards the first lens
