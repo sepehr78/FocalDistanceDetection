@@ -40,7 +40,7 @@ wavelength = 0.976 * um
 # internal_noise_stds = np.asarray([0, 0.25, 0.5, 0.75])
 # external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
 corr_len_arr = np.linspace(50, 500, 10)
-internal_noise_stds = np.linspace(0, 0.75, 10)
+internal_noise_stds = np.linspace(0, 0.50, 10)
 external_noise_stds = np.linspace(0, 0.05, 10)
 
 
@@ -63,7 +63,7 @@ def save_noisy_images(rayleigh):
         for internal_noise_std in internal_noise_stds:
             for corr_len in corr_len_arr:
                 u0 = copy.deepcopy(og_u0)
-                t3.roughness(t=(corr_len, corr_len), s=internal_noise_std)
+                t3.roughness(t=(corr_len, corr_len), s=internal_noise_std*nm)
                 u0 = u0 * t3
 
                 z0 = focal + rayleigh  # Initial wave moving towards the first lens
