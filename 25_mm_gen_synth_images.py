@@ -25,7 +25,7 @@ num_samples = 1100
 save_dir = "synth_images_25_mm"
 num_imgs_per_noise = 200
 num_procs_to_use = multiprocessing.cpu_count()
-num_procs_to_use = 11  # Took about 10GB ram
+# num_procs_to_use = 11  # Took about 10GB ram
 
 x0 = np.linspace(-500 * um, 500 * um, num_samples)
 y0 = np.linspace(-500 * um, 500 * um, num_samples)

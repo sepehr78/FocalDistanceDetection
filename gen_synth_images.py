@@ -21,37 +21,32 @@ save directory. It uses multiple cores/threads in parallel to speed up the simul
 """
 
 saved_img_size = (48, 48)
-num_samples = 2500
+num_samples = 1000
 save_dir = "synth_images"
 num_imgs_per_noise = 100
 num_procs_to_use = multiprocessing.cpu_count()
-num_procs_to_use = 6  # 12 processes was too much because each one uses more than 3 GB of RAM
 
-x0 = np.linspace(-600 * um, 600 * um, num_samples)
-y0 = np.linspace(-600 * um, 600 * um, num_samples)
+x0 = np.linspace(-300 * um, 300 * um, num_samples)
+y0 = np.linspace(-300 * um, 300 * um, num_samples)
 
-focal = 8 * mm
-focal2 = 90 * mm
-diameter = 2 * mm
+focal = 11 * mm
+focal2 = 35 * mm
+diameter = 5.5 * mm
 dia2 = 2 * mm
-d = 444 * mm
-raylen = 20 * um
-# rayleigh_arr = np.arange(-6 * raylen, 6 * raylen + 0.00001, raylen)  # Modify the stepsize by this
-rayleigh_arr = np.asarray([-250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250])
+d = 300 * mm
+raylen = 147 * um
+rayleigh_arr = np.arange(-raylen, raylen + 0.00001, raylen / 5)  # Modify the stepsize by this
 wavelength = 0.976 * um
 
-# internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
-# external_noise_stds = np.linspace(0, 0.05, 6)
-
-internal_noise_stds = np.arange(0, 1.5 + 0.0001, 0.25) * 1000 * nm
-external_noise_stds = np.asarray([0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06])
+internal_noise_stds = np.asarray([0, 0.5, 1, 2, 3, 4, 5]) * 1000 * nm
+external_noise_stds = np.linspace(0, 0.05, 6)
 
 
 def save_noisy_images(rayleigh):
     og_u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-    og_u0.gauss_beam(A=1, r0=(0, 0), z0=0 * mm, w0=5 * um, theta=0 * degrees)
+    og_u0.gauss_beam(A=1, r0=(0, 0), z0=0 * mm, w0=13.7 * um, theta=0 * degrees)
 
-    # initialize lenses
+    # initialize lenses and surface roughness
     t0 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
     t0.lens(r0=(0.0, 0.0), radius=diameter / 2, focal=focal, mask=True)
     t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
@@ -79,12 +74,15 @@ def save_noisy_images(rayleigh):
                 ext_noise = np.random.normal(0, external_noise_std, (num_samples, num_samples))
 
                 i_w_ext_noise = (intensity - intensity.min()) / (intensity.max() - intensity.min()) + ext_noise
-                img_data = ((i_w_ext_noise - i_w_ext_noise.min()) / (i_w_ext_noise.max() - i_w_ext_noise.min()) * 255).astype(np.uint8)
+                img_data = ((i_w_ext_noise - i_w_ext_noise.min()) / (
+                            i_w_ext_noise.max() - i_w_ext_noise.min()) * 255).astype(np.uint8)
                 img = Image.fromarray(img_data, "L")
-                img = img.resize(saved_img_size, PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
+                img = img.resize(saved_img_size,
+                                 PIL.Image.NEAREST)  # if proper interpolation is used then ext-noise will be removed
                 # plt.imshow(img, cmap="gray")
                 # plt.show()
-                img.save(os.path.join(save_dir, f"{rayleigh}_{internal_noise_std}_{external_noise_std}_imgs", f"{l:05d}.png"))
+                img.save(os.path.join(save_dir, f"{rayleigh}_{internal_noise_std}_{external_noise_std}_imgs",
+                                      f"{l:05d}.png"))
 
 
 if __name__ == '__main__':

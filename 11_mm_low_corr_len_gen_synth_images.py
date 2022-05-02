@@ -38,7 +38,7 @@ d = 300 * mm
 raylen = 150 * um
 rayleigh_arr = np.arange(-raylen,  raylen + 0.00001, raylen/5)  # Modify the stepsize by this
 wavelength = 0.976 * um
-
+z
 internal_noise_stds = np.asarray([0, 0.25, 0.5, 0.75]) 
 external_noise_stds = np.asarray([0, 0.01, 0.03, 0.05])
 corr_len = 7*um
