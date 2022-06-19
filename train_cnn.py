@@ -10,16 +10,16 @@ from utils import *
 directories = [os.path.join("training_videos", x) for x in ["Copper", "Steel", "Silicon"]]
 parser = argparse.ArgumentParser(description='Train CNN to predict images on different sets of videos')
 parser.add_argument('--bs', type=int, default=16, help='Batch size')
-parser.add_argument('--num_epochs', type=int, default=30, help='Number of epochs')
+parser.add_argument('--num_epochs', type=int, default=100, help='Number of epochs')
 parser.add_argument('--val_p', type=float, default=0.15, help='Percentage of frames to use for validation')
 parser.add_argument('--seed', type=int, default=423132, help='Seed used for splitting frames into train/val/test')
 parser.add_argument('--directories', default=directories, nargs='+', help='Directories where video files are located. Each '
                                                                  'directory should contain videos at different focal '
                                                                  'distances and the name of each video file should be '
                                                                  'its focal distance (e.g., 150.avi)')
-parser.add_argument('--results_dir', default="results_classifier", help='Directory where results will be saved')
+parser.add_argument('--results_dir', default="results_predictor", help='Directory where results will be saved')
 parser.add_argument('--train_classifier', action='store_true')
-parser.set_defaults(train_classifier=True)
+parser.set_defaults(train_classifier=False)
 
 
 args = parser.parse_args()

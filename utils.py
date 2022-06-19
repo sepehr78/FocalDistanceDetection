@@ -7,7 +7,7 @@ import seaborn as sns
 import torch.cuda
 import torch.nn.functional as F
 from fastai.callback.schedule import Learner  # To get `fit_one_cycle`, `lr_find`
-from fastai.callback.tracker import SaveModelCallback
+from fastai.callback.tracker import SaveModelCallback, EarlyStoppingCallback
 from fastai.losses import CrossEntropyLossFlat
 from fastai.metrics import accuracy
 from fastai.optimizer import OptimWrapper
@@ -87,13 +87,27 @@ def split_train_val(datasets, label_names, val_percentage, test_percentage, trai
     return train_dset, val_dset, test_dset
 
 
-def compute_predicted_acc(predicted, target, label_names, return_preds_target=False):
+def unscale_output(output, label_names):
+    """
+    Unscales the output of a net, where output is in [0,1], using the given label names
+    :return: returns rescaled output
+    """
     min_label, max_label = torch.min(label_names), torch.max(label_names)
-    predicted = predicted * (max_label - min_label) + min_label
-    pred_indices = torch.abs(predicted - label_names).argmin(dim=1)
+    if not torch.is_tensor(output):
+        min_label = min_label.cpu().numpy()
+        max_label = max_label.cpu().numpy()
+
+    unscaled_output = output * (max_label - min_label) + min_label
+    return unscaled_output
+
+
+def compute_predicted_acc(predicted, target, label_names, return_preds_target=False):
+    unscaled_pred = unscale_output(predicted, label_names)
+    unscaled_target = unscale_output(target, label_names)
+    pred_indices = torch.abs(unscaled_pred - label_names).argmin(dim=1)
     pred_labels = label_names[pred_indices].unsqueeze(1)  # shape (batchsize, 1)
 
-    target = torch.round(target * (max_label - min_label) + min_label).long()
+    target = torch.round(unscaled_target).long()
 
     # the class with the highest energy is what we choose as prediction
     total = pred_labels.size(0)
@@ -111,7 +125,9 @@ def train_predictor(net, dls, label_names, num_epochs, path=None, use_adam=True)
         partial(OptimWrapper, opt=optim.SGD, momentum=0.93, weight_decay=0.001)
     learn = Learner(dls, net, loss_func=F.mse_loss, opt_func=opt_func, metrics=predict_acc, path=path)
     lr = learn.lr_find(num_it=2000)[0]
-    learn.fit_one_cycle(num_epochs, lr, cbs=SaveModelCallback(monitor='<lambda>', min_delta=0.001))
+    cbs = [SaveModelCallback(monitor='<lambda>', min_delta=0.001),
+           EarlyStoppingCallback(monitor='<lambda>', min_delta=0.001, patience=10)]
+    learn.fit_one_cycle(num_epochs, lr, cbs=cbs)
     learn.save("trainedModel", with_opt=False)
     return learn
 
@@ -144,6 +160,7 @@ def predict_labels_net(net, d_loader, label_names, is_predictor_model):
             time_taken_arr.append(time_taken_per_img)
 
             if is_predictor_model:
+                # for predictor model, outputs and labels are between [0, 1]
                 _, preds, tar = compute_predicted_acc(outputs, labels, label_names, True)
             else:
                 preds = label_names[outputs.argmax(dim=1)]
@@ -153,3 +170,29 @@ def predict_labels_net(net, d_loader, label_names, is_predictor_model):
             targets.extend(tar.cpu().numpy().flatten().tolist())
 
     return np.asarray(predictions), np.asarray(targets), np.mean(time_taken_arr)
+
+
+def get_net_outout_and_time(net, d_loader, label_names):
+    """
+    Returns the outputs of a net for each item in a dataloader, while timing each inference
+    :return: flat array of net outputs, flat array of labels, average time taken
+    """
+    predictions = []
+    targets = []
+    time_taken_arr = []
+    net = net.eval()
+    with torch.no_grad():
+        for inputs, labels_ in d_loader:
+            inputs = inputs.to(device)
+
+            starting_time = time.time()
+            outputs = net(inputs)
+            time_taken_per_img = (time.time() - starting_time) / len(inputs)
+            time_taken_arr.append(time_taken_per_img)
+            predictions.extend(outputs.cpu().numpy().flatten().tolist())
+            targets.extend(labels_.cpu().numpy().flatten().tolist())
+
+    unscaled_preds = unscale_output(np.asarray(predictions), label_names)
+    unscaled_targets = np.round(unscale_output(np.asarray(targets), label_names)).astype(int)
+
+    return unscaled_preds, unscaled_targets, np.mean(time_taken_arr)

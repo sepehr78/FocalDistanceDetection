@@ -25,7 +25,10 @@ parser.add_argument('--directories', default=directories, nargs='+',
                          'distances and the name of each video file should be '
                          'its focal distance (e.g., 150.avi)')
 parser.add_argument('--test_classifier', action='store_true')
+parser.add_argument('--save_unscaled_out', action='store_true')
+
 parser.set_defaults(test_classifier=False)
+parser.set_defaults(save_unscaled_out=True)
 
 args = parser.parse_args()
 
@@ -62,7 +65,12 @@ if __name__ == '__main__':
 
         label_names = torch.from_numpy(label_names_np).long().to(device)
 
-        testing_dl = DataLoader(ConcatDataset(datasets), batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
+        testing_dl = DataLoader(ConcatDataset(datasets), batch_size=256, shuffle=False, num_workers=4, pin_memory=True)
+
+        if args.save_unscaled_out:
+            net_output, test_targets, _ = get_net_outout_and_time(net, testing_dl, label_names)
+            net_output.astype(np.float32).tofile(os.path.join(result_dir, "net_out.dat"))
+            test_targets.astype(int).tofile(os.path.join(result_dir, "targets.dat"))
 
         test_preds, test_targets, avg_time_taken = predict_labels_net(net, testing_dl, label_names, not use_classifier)
         time_taken_arr.append(avg_time_taken)
