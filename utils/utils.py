@@ -14,7 +14,7 @@ from fastai.optimizer import OptimWrapper
 from matplotlib import pyplot as plt
 from torch import optim
 from torch.utils.data import ConcatDataset, random_split
-from VideoDataset import VideoDataset
+from models.VideoDataset import VideoDataset
 
 sns.set_theme(style="white")
 

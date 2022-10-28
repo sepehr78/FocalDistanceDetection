@@ -1,14 +1,12 @@
 import argparse
 
-from fastai.data.block import DataBlock, RegressionBlock, CategoryBlock
-from fastai.data.core import DataLoaders
-from fastai.data.load import DataLoader
+from fastai.data.block import DataBlock, CategoryBlock
 from fastai.data.transforms import get_image_files, RandomSplitter, IntToFloatTensor
 from fastai.vision.core import PILImageBW
 from fastai.vision.data import ImageBlock
 
-from model import FocusClassifier
-from utils import *
+from models.model import FocusClassifier
+from utils.utils import *
 
 parser = argparse.ArgumentParser(description='Train regression CNN to predict simulated images')
 parser.add_argument('--bs', type=int, default=16, help='Batch size')

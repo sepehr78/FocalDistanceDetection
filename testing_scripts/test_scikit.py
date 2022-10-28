@@ -1,17 +1,9 @@
 import argparse
-import os
 import pickle
-import time
 
 import pandas as pd
-import sklearn.metrics
-from fastai.data.load import DataLoader
-from matplotlib import pyplot as plt
-import seaborn as sns
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
-from utils import *
-
-from model import FocusClassifier, FocusPredictor
+from utils.utils import *
 
 sns.set_theme(style="white")
 

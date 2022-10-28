@@ -1,18 +1,13 @@
 import argparse
 import pickle
 
-import sklearn.svm
-from fastai.data.core import DataLoaders
-from fastai.data.load import DataLoader
 from sklearn.decomposition import PCA
-from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
-from model import FocusPredictor, FocusClassifier
-from utils import *
+from utils.utils import *
 
 directories = [os.path.join("training_videos", x) for x in ["Copper", "Steel", "Silicon"]]
 parser = argparse.ArgumentParser(description='Train CNN to predict images on different sets of videos')

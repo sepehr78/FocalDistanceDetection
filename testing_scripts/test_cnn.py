@@ -1,15 +1,12 @@
 import argparse
-import os
 import pickle
 
 import pandas as pd
-import sklearn.metrics
 from fastai.data.load import DataLoader
-import seaborn as sns
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
-from utils import *
+from utils.utils import *
 
-from model import FocusClassifier, FocusPredictor
+from models.model import FocusClassifier, FocusPredictor
 
 folder_names = ["Copper", "Steel", "Silicon"]
 directories = [os.path.join("testing_videos", x) for x in folder_names]

@@ -2,21 +2,16 @@ import argparse
 import pickle
 from glob import glob
 
-import matplotlib.pyplot as plt
 import pandas as pd
-import sklearn.metrics
-from fastai.data.block import DataBlock, RegressionBlock, CategoryBlock
-from fastai.data.core import DataLoaders
-from fastai.data.load import DataLoader
+from fastai.data.block import DataBlock, CategoryBlock
 from fastai.data.transforms import get_image_files, RandomSplitter, IntToFloatTensor
 from fastai.vision.core import PILImageBW
 from fastai.vision.data import ImageBlock
-from matplotlib.ticker import StrMethodFormatter
 from sklearn.metrics import *
 
-from model import FocusClassifier
+from models.model import FocusClassifier
 from test_cnn import plot_cm_matrix
-from utils import *
+from utils.utils import *
 
 parser = argparse.ArgumentParser(description='Plot confusion matrices and report accuracies of trained models on test '
                                              'data. train_cnn_on_synth.py must be run before')

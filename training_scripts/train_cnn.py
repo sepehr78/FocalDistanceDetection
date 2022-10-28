@@ -4,8 +4,8 @@ import pickle
 from fastai.data.core import DataLoaders
 from fastai.data.load import DataLoader
 
-from model import FocusPredictor, FocusClassifier
-from utils import *
+from models.model import FocusPredictor, FocusClassifier
+from utils.utils import *
 
 directories = [os.path.join("training_videos", x) for x in ["Copper", "Steel", "Silicon"]]
 parser = argparse.ArgumentParser(description='Train CNN to predict images on different sets of videos')

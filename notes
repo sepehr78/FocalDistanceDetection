@@ -1,6 +1,0 @@
-Predictor:
-    20 epochs, 19 sec each
-
-Classifier:
-    5 epochs, 34 sec each
-
