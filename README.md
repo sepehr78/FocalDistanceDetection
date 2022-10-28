@@ -1,2 +1,1 @@
-# Code for both the theoretical and experimental SPIE22 submissions.
-Will be made public once the proceedings/presentaitons are published.
+# Code for High-precision laser focus positioning of rough surfaces by deep learning submitted to Optics and Lasers in Engineering.
