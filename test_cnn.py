@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(description='Plot confusion matrices and report
 # parser.add_argument('--results_directories', nargs='+', default=results_directories,
 #                     help='Directory where results are saved (for different CNN models) and where the results of '
 #                          'testing, like confusion matrix, will be saved')
-parser.add_argument('--results_dir', default="results_predictor", help='Directory where results are saved')
+parser.add_argument('--results_dir', default="results_predictor_all", help='Directory where results are saved')
 
 parser.add_argument('--directories', default=directories, nargs='+',
                     help='Directories where video files are located for testing. Each '
@@ -90,7 +90,8 @@ if __name__ == '__main__':
         test_preds, test_targets, avg_time_taken = predict_labels_net(net, testing_dl, label_names, not use_classifier)
         time_taken_arr.append(avg_time_taken)
 
-        class_report_txt = classification_report(test_targets, test_preds, target_names=label_names_np.astype(str))
+        class_report_txt = classification_report(test_targets, test_preds, target_names=label_names_np.astype(str),
+                                                 digits=4)
         print(class_report_txt)
         with open(os.path.join(result_dir, "testing_report.txt"), 'w') as f:
             f.write(class_report_txt)

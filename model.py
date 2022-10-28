@@ -22,7 +22,9 @@ class FocusClassifier(nn.Module):
         n_flat_features = torch.flatten(temp_out, 1).size(1)
 
         self.classifier = nn.Sequential(
-            nn.Linear(n_flat_features, 512),
+            nn.Linear(n_flat_features, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
             nn.ReLU(),
             nn.Linear(512, self.num_classes)
         )
@@ -42,3 +44,7 @@ class FocusPredictor(FocusClassifier):
         x = super().forward(x)
         x = torch.sigmoid(x)
         return x
+
+
+if __name__ == '__main__':
+    predictor = FocusPredictor()

@@ -18,12 +18,15 @@ parser.add_argument('--directories', default=directories, nargs='+',
                          'directory should contain videos at different focal '
                          'distances and the name of each video file should be '
                          'its focal distance (e.g., 150.avi)')
-parser.add_argument('--results_dir', default="results_predictor", help='Directory where results will be saved')
+parser.add_argument('--results_dir', default="results_predictor_all", help='Directory where results will be saved')
 parser.add_argument('--train_classifier', action='store_true')
 parser.set_defaults(train_classifier=False)
 
 parser.add_argument('--train_one_model', action='store_true')
 parser.set_defaults(train_one_model=True)
+
+parser.add_argument('--train_on_all_labels', action='store_true')
+parser.set_defaults(train_on_all_labels=True)
 
 args = parser.parse_args()
 
@@ -61,7 +64,7 @@ def get_combined_dataset(directories):
 
 def train_model(label_names_np, datasets, result_dir):
     # only train on every other label including beginning and end
-    if use_predictor:
+    if use_predictor and not args.train_on_all_labels:
         train_label_indices = [0] + list(range(2, len(label_names_np) - 1, 2)) + [-1]
         training_labels = label_names_np[train_label_indices]
         training_labels = np.sort(list(training_labels) + [0])

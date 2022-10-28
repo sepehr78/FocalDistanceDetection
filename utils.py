@@ -125,8 +125,9 @@ def train_predictor(net, dls, label_names, num_epochs, path=None, use_adam=True)
         partial(OptimWrapper, opt=optim.SGD, momentum=0.93, weight_decay=0.001)
     learn = Learner(dls, net, loss_func=F.mse_loss, opt_func=opt_func, metrics=predict_acc, path=path)
     lr = learn.lr_find(num_it=4000)[0]
+    print(f"Using a learning rate of {lr}")
     cbs = [SaveModelCallback(monitor='<lambda>', min_delta=0.001),
-           EarlyStoppingCallback(monitor='<lambda>', min_delta=0.001, patience=10)]
+           EarlyStoppingCallback(monitor='<lambda>', min_delta=0.001, patience=15)]
     learn.fit_one_cycle(num_epochs, lr, cbs=cbs)
     learn.save("trainedModel", with_opt=False)
     return learn
@@ -137,9 +138,11 @@ def train_classifier(net, dls, num_epochs, path=None, use_adam=True):
     opt_func = partial(OptimWrapper, opt=optim.Adam) if use_adam else \
         partial(OptimWrapper, opt=optim.SGD, momentum=0.93, weight_decay=0.001)
     learn = Learner(dls, net, loss_func=CrossEntropyLossFlat(), opt_func=opt_func, metrics=accuracy, path=path)
-    lr = learn.lr_find(num_it=2000)[0]
+    lr = learn.lr_find(num_it=4000)[0]
+    cbs = [SaveModelCallback(monitor="accuracy", min_delta=0.001),
+           EarlyStoppingCallback(monitor='accuracy', min_delta=0.001, patience=15)]
     print(f"Using a learning rate of {lr}")
-    learn.fit_one_cycle(num_epochs, lr, cbs=SaveModelCallback(monitor="accuracy", min_delta=0.001))
+    learn.fit_one_cycle(num_epochs, lr, cbs=cbs)
     learn.save("trainedModel", with_opt=False)
     return learn
 
