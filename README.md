@@ -1,5 +1,5 @@
 # High-Precision Laser Focus Positioning of Rough Surfaces by Deep Learning
-This repository contains the code for the paper titled "High-precision laser focus positioning of rough surfaces by deep learning", published in Optics and Lasers in Engineering.
+This repository contains the code for the paper titled "High-precision laser focus positioning of rough surfaces by deep learning", published in Optics and Lasers in Engineering. For any questions, contact Sepehr Elahi at [elahisepehr@gmail.com](mailto:elahisepehr@gmail.com).
 ![The CNN model used in our work](https://dub07pap001files.storage.live.com/y4maafpOxRKs6HAWSC2P7_1FdCgaQ349TKAC8mBE7LFifZTPw-2NMJYcSDGaJooFOCixSn7-k2OUk7Dfdp2L7JhlHOduNS2S9NHVaLKqB9VROfooj_1u52_7j2Pb8w3vA26HaGWC9fxfYotfN-nsn4bgRbKBjEeyGXJTYerfMi96f_v9ImYAC6QNR2ZW6wtQKQa6DYMVK0SU4ZxV1r2ilGItVgCPTfUpWytBa3QPzXZYBo?encodeFailures=1&width=2860&height=800)
 # Setup
 The code uses standard Python numerical computing, like Pandas and NumPy, for general numerical computation, [fastai](https://docs.fast.ai) and PyTorch for training and testing CNNs, and [diffractio](https://diffractio.readthedocs.io/en/latest/) for Fourier optics simulations. We listed all the Python package requirements in the requirements.txt file, which can be installed using the following command:
