@@ -44,7 +44,3 @@ class FocusPredictor(FocusClassifier):
         x = super().forward(x)
         x = torch.sigmoid(x)
         return x
-
-
-if __name__ == '__main__':
-    predictor = FocusPredictor()
