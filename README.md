@@ -1,6 +1,6 @@
 # High-Precision Laser Focus Positioning of Rough Surfaces by Deep Learning
 This repository contains the code for the paper titled "High-precision laser focus positioning of rough surfaces by deep learning", published in Optics and Lasers in Engineering. For any questions regarding the code, contact [Sepehr Elahi](https://sepehrelahi.com) at [sepehr.elahi@epfl.ch](mailto:sepehr.elahi@epfl.ch).
-![The CNN model used in our work](https://dub07pap001files.storage.live.com/y4maafpOxRKs6HAWSC2P7_1FdCgaQ349TKAC8mBE7LFifZTPw-2NMJYcSDGaJooFOCixSn7-k2OUk7Dfdp2L7JhlHOduNS2S9NHVaLKqB9VROfooj_1u52_7j2Pb8w3vA26HaGWC9fxfYotfN-nsn4bgRbKBjEeyGXJTYerfMi96f_v9ImYAC6QNR2ZW6wtQKQa6DYMVK0SU4ZxV1r2ilGItVgCPTfUpWytBa3QPzXZYBo?encodeFailures=1&width=2860&height=800)
+![The CNN model used in our work](https://raw.githubusercontent.com/sepehr78/FocalDistanceDetection/master/model.png)
 # Setup
 The code uses standard Python numerical computing, like Pandas and NumPy, for general numerical computation, [fastai](https://docs.fast.ai) and PyTorch for training and testing CNNs, and [diffractio](https://diffractio.readthedocs.io/en/latest/) for Fourier optics simulations. We listed all the Python package requirements in the requirements.txt file, which can be installed using the following command:
 
@@ -30,4 +30,4 @@ You can find the scripts for training our model on the synthetic and experimenta
 # Testing models
 You can find the scripts for testing our model after it has been trained on the synthetic and experimental data in the testing_scripts directory.
 
-![Laser defocus prediction results of our CNN model on different surfaces](https://dub07pap001files.storage.live.com/y4moGEdCdTFAdHzK-i_-fzLEbjoMjgsOp2i0OVydLZkcijUEM5XaCqABEhZNOn0Haf-gdEYg5gS0J2LYhEW3Km8yRaP8dNqKLZyWLA3yeA_PD5kip4iH7sNQB0U0DQIqa8NMmNs_sDKMjebfTUkDeSZD6l66U5lwGXpIQQoDVCVlk8EJB3qH68pEOrg8I4wxu4sAk3YK8gYliFDmxXfkUOMww?encodeFailures=1&width=2560&height=746)
+![Laser defocus prediction results of our CNN model on different surfaces](https://github.com/sepehr78/FocalDistanceDetection/blob/master/results.png?raw=true)
